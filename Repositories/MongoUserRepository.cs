@@ -1,0 +1,105 @@
+using MongoDB.Driver;
+using Microsoft.Extensions.Options;
+using EadChargingBookingBackend.Models;
+using EadChargingBookingBackend.Configuration;
+
+namespace EadChargingBookingBackend.Repositories;
+
+public class MongoUserRepository : IUserRepository
+{
+    private readonly IMongoCollection<User> _users;
+
+    public MongoUserRepository(IOptions<MongoDbSettings> mongoDbSettings)
+    {
+        var client = new MongoClient(mongoDbSettings.Value.ConnectionString);
+        var database = client.GetDatabase(mongoDbSettings.Value.DatabaseName);
+        _users = database.GetCollection<User>("users");
+
+        // Create indexes for better performance
+        CreateIndexes();
+    }
+
+    public async Task<IEnumerable<User>> GetAllAsync()
+    {
+        return await _users.Find(_ => true).ToListAsync();
+    }
+
+    public async Task<User?> GetByIdAsync(string id)
+    {
+        return await _users.Find(u => u.Id == id).FirstOrDefaultAsync();
+    }
+
+    public async Task<User?> GetByUsernameAsync(string username)
+    {
+        return await _users.Find(u => u.Username == username).FirstOrDefaultAsync();
+    }
+
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        return await _users.Find(u => u.Email == email).FirstOrDefaultAsync();
+    }
+
+    public async Task<User> CreateAsync(string username, string email, string passwordHash, string role)
+    {
+        var user = new User(username, email, passwordHash, role);
+        await _users.InsertOneAsync(user);
+        return user;
+    }
+
+    public async Task<bool> UpdateAsync(string id, string username, string email, string role, bool isActive)
+    {
+        var update = Builders<User>.Update
+            .Set(u => u.Username, username)
+            .Set(u => u.Email, email)
+            .Set(u => u.Role, role)
+            .Set(u => u.IsActive, isActive)
+            .Set(u => u.UpdatedAt, DateTime.UtcNow);
+
+        var result = await _users.UpdateOneAsync(u => u.Id == id, update);
+        return result.ModifiedCount > 0;
+    }
+
+    public async Task<bool> DeleteAsync(string id)
+    {
+        var result = await _users.DeleteOneAsync(u => u.Id == id);
+        return result.DeletedCount > 0;
+    }
+
+    public async Task<bool> UsernameExistsAsync(string username)
+    {
+        var count = await _users.CountDocumentsAsync(u => u.Username == username);
+        return count > 0;
+    }
+
+    public async Task<bool> EmailExistsAsync(string email)
+    {
+        var count = await _users.CountDocumentsAsync(u => u.Email == email);
+        return count > 0;
+    }
+
+    private void CreateIndexes()
+    {
+        try
+        {
+            // Create unique index for username
+            var usernameIndexKeys = Builders<User>.IndexKeys.Ascending(u => u.Username);
+            var usernameIndexOptions = new CreateIndexOptions { Unique = true };
+            var usernameIndexModel = new CreateIndexModel<User>(usernameIndexKeys, usernameIndexOptions);
+
+            // Create unique index for email
+            var emailIndexKeys = Builders<User>.IndexKeys.Ascending(u => u.Email);
+            var emailIndexOptions = new CreateIndexOptions { Unique = true };
+            var emailIndexModel = new CreateIndexModel<User>(emailIndexKeys, emailIndexOptions);
+
+            // Create index for role
+            var roleIndexKeys = Builders<User>.IndexKeys.Ascending(u => u.Role);
+            var roleIndexModel = new CreateIndexModel<User>(roleIndexKeys);
+
+            _users.Indexes.CreateMany(new[] { usernameIndexModel, emailIndexModel, roleIndexModel });
+        }
+        catch (Exception)
+        {
+            // Indexes might already exist, ignore the error
+        }
+    }
+}

@@ -1,0 +1,37 @@
+{
+  // C# Formatting
+  "omnisharp.enableRoslynAnalyzers": true,
+  "omnisharp.enableEditorConfigSupport": true,
+
+  // Auto-format on save
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.formatOnPaste": true,
+
+  // C# specific formatting
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false
+  },
+
+  // JSON formatting
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // Auto-save
+  "files.autoSave": "onFocusChange",
+
+  // Hide build artifacts
+  "files.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/*.dll": true,
+    "**/*.pdb": true,
+    "**/*.exe": true
+  },
+  "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+  "postman.settings.dotenv-detection-notification-visibility": false
+}
