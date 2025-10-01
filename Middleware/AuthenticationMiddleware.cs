@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using EadChargingBookingBackend.Configuration;
+using AppConfig = EadChargingBookingBackend.Configuration;
 
 namespace EadChargingBookingBackend.Middleware;
 
@@ -11,7 +10,7 @@ public static class AuthenticationMiddleware
     public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         // Get JWT settings from centralized configuration manager
-        var jwtSettings = EadChargingBookingBackend.Configuration.ConfigurationManager.GetJwtSettings(configuration);
+        var jwtSettings = AppConfig.ConfigurationManager.GetJwtSettings(configuration);
         var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
 
         services.AddAuthentication(options =>

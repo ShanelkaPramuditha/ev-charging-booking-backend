@@ -1,15 +1,16 @@
 using System.Text.Json;
 using EadChargingBookingBackend.Extensions;
-using EadChargingBookingBackend.Configuration;
 using EadChargingBookingBackend.Middleware;
-
-// Load environment variables from .env file using centralized configuration
-EadChargingBookingBackend.Configuration.ConfigurationManager.LoadEnvironmentVariables();
+using AppConfig = EadChargingBookingBackend.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load environment variables from .env file using centralized configuration
+AppConfig.ConfigurationManager.LoadEnvironmentVariables();
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerConfiguration();
 
