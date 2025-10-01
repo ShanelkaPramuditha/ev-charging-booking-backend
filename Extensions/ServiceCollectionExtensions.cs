@@ -1,6 +1,6 @@
 using EadChargingBookingBackend.Services;
 using EadChargingBookingBackend.Repositories;
-using EadChargingBookingBackend.Configuration;
+using AppConfig = EadChargingBookingBackend.Configuration;
 
 namespace EadChargingBookingBackend.Extensions;
 
@@ -9,9 +9,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         // Configure all settings using centralized configuration manager
-        EadChargingBookingBackend.Configuration.ConfigurationManager.ConfigureAllSettings(services, configuration);
-
-
+        AppConfig.ConfigurationManager.ConfigureAllSettings(services, configuration);
 
         // Register repositories
         services.AddScoped<IUserRepository, MongoUserRepository>();
@@ -19,9 +17,6 @@ public static class ServiceCollectionExtensions
         // Register services
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IJwtService, JwtService>();
-
-        // Add Controllers
-        services.AddControllers();
 
         return services;
     }
