@@ -4,26 +4,42 @@ namespace EadChargingBookingBackend.Configuration;
 
 public static class ConfigurationManager
 {
+    // Load environment variables from .env files
     public static void LoadEnvironmentVariables()
     {
-        // Load .env file if it exists
-        var envFile = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+        var currentDirectory = Directory.GetCurrentDirectory();
+        var environment = Environment.GetEnvironmentVariable(EnvironmentVariables.ASPNETCORE_ENVIRONMENT) ?? "Development";
+
+        // Load environment-specific .env file first (higher priority)
+        var envSpecificFile = Path.Combine(currentDirectory, $".env.{environment.ToLower()}");
+        if (File.Exists(envSpecificFile))
+        {
+            Console.WriteLine($"Loading environment-specific config: {envSpecificFile}");
+            Env.Load(envSpecificFile);
+        }
+
+        // Load general .env file (lower priority, won't override existing variables)
+        var envFile = Path.Combine(currentDirectory, ".env");
         if (File.Exists(envFile))
         {
-            Env.Load(envFile);
+            Console.WriteLine($"Loading general config: {envFile}");
+            Env.Load(envFile, new LoadOptions(clobberExistingVars: false));
         }
+
+        Console.WriteLine($"Current environment: {environment}");
     }
 
+    // Configure all settings and validate
     public static void ConfigureAllSettings(IServiceCollection services, IConfiguration configuration)
     {
         // Configure MongoDB settings
         services.Configure<MongoDbSettings>(options =>
         {
-            options.ConnectionString = GetEnvironmentVariable("MONGODB_CONNECTION_STRING")
+            options.ConnectionString = GetEnvironmentVariable(EnvironmentVariables.MONGODB_CONNECTION_STRING)
                                      ?? configuration["MongoDbSettings:ConnectionString"]
                                      ?? throw new InvalidOperationException("MongoDB connection string not found");
 
-            options.DatabaseName = GetEnvironmentVariable("MONGODB_DATABASE_NAME")
+            options.DatabaseName = GetEnvironmentVariable(EnvironmentVariables.MONGODB_DATABASE_NAME)
                                  ?? configuration["MongoDbSettings:DatabaseName"]
                                  ?? "EadChargingBookingDb";
 
@@ -33,19 +49,19 @@ public static class ConfigurationManager
         // Configure JWT settings
         services.Configure<JwtSettings>(options =>
         {
-            options.SecretKey = GetEnvironmentVariable("JWT_SECRET_KEY")
+            options.SecretKey = GetEnvironmentVariable(EnvironmentVariables.JWT_SECRET_KEY)
                               ?? configuration["JwtSettings:SecretKey"]
                               ?? throw new InvalidOperationException("JWT SecretKey not found");
 
-            options.Issuer = GetEnvironmentVariable("JWT_ISSUER")
+            options.Issuer = GetEnvironmentVariable(EnvironmentVariables.JWT_ISSUER)
                            ?? configuration["JwtSettings:Issuer"]
                            ?? "EadChargingBookingAPI";
 
-            options.Audience = GetEnvironmentVariable("JWT_AUDIENCE")
+            options.Audience = GetEnvironmentVariable(EnvironmentVariables.JWT_AUDIENCE)
                              ?? configuration["JwtSettings:Audience"]
                              ?? "EadChargingBookingClient";
 
-            options.ExpirationMinutes = int.TryParse(GetEnvironmentVariable("JWT_EXPIRATION_MINUTES"), out var expiration)
+            options.ExpirationMinutes = int.TryParse(GetEnvironmentVariable(EnvironmentVariables.JWT_EXPIRATION_MINUTES), out var expiration)
                                       ? expiration
                                       : configuration.GetValue<int>("JwtSettings:ExpirationMinutes", 60);
 
@@ -53,21 +69,22 @@ public static class ConfigurationManager
         });
     }
 
+    // Helper methods to get settings directly
     public static JwtSettings GetJwtSettings(IConfiguration configuration)
     {
-        var secretKey = GetEnvironmentVariable("JWT_SECRET_KEY");
+        var secretKey = GetEnvironmentVariable(EnvironmentVariables.JWT_SECRET_KEY);
         if (string.IsNullOrEmpty(secretKey))
         {
             secretKey = configuration["JwtSettings:SecretKey"];
         }
 
-        var issuer = GetEnvironmentVariable("JWT_ISSUER");
+        var issuer = GetEnvironmentVariable(EnvironmentVariables.JWT_ISSUER);
         if (string.IsNullOrEmpty(issuer))
         {
             issuer = configuration["JwtSettings:Issuer"] ?? "EadChargingBookingAPI";
         }
 
-        var audience = GetEnvironmentVariable("JWT_AUDIENCE");
+        var audience = GetEnvironmentVariable(EnvironmentVariables.JWT_AUDIENCE);
         if (string.IsNullOrEmpty(audience))
         {
             audience = configuration["JwtSettings:Audience"] ?? "EadChargingBookingClient";
@@ -84,7 +101,7 @@ public static class ConfigurationManager
             SecretKey = secretKey,
             Issuer = issuer,
             Audience = audience,
-            ExpirationMinutes = int.TryParse(GetEnvironmentVariable("JWT_EXPIRATION_MINUTES"), out var expiration)
+            ExpirationMinutes = int.TryParse(GetEnvironmentVariable(EnvironmentVariables.JWT_EXPIRATION_MINUTES), out var expiration)
                               ? expiration
                               : configuration.GetValue<int>("JwtSettings:ExpirationMinutes", 60)
         };
@@ -97,12 +114,10 @@ public static class ConfigurationManager
     {
         var mongoSettings = new MongoDbSettings
         {
-            ConnectionString = GetEnvironmentVariable("MONGODB_CONNECTION_STRING")
-                             ?? configuration["MongoDbSettings:ConnectionString"]
+            ConnectionString = GetEnvironmentVariable(EnvironmentVariables.MONGODB_CONNECTION_STRING)
                              ?? throw new InvalidOperationException("MongoDB connection string not found"),
 
-            DatabaseName = GetEnvironmentVariable("MONGODB_DATABASE_NAME")
-                         ?? configuration["MongoDbSettings:DatabaseName"]
+            DatabaseName = GetEnvironmentVariable(EnvironmentVariables.MONGODB_DATABASE_NAME)
                          ?? "EadChargingBookingDb"
         };
 
@@ -125,9 +140,12 @@ public static class ConfigurationManager
         return Environment.GetEnvironmentVariable(key) ?? defaultValue;
     }
 
-    // Centralized environment variable mapping
+    // Environment variable keys
     public static class EnvironmentVariables
     {
+        // General
+        public const string ASPNETCORE_ENVIRONMENT = "ASPNETCORE_ENVIRONMENT";
+
         // MongoDB
         public const string MONGODB_CONNECTION_STRING = "MONGODB_CONNECTION_STRING";
         public const string MONGODB_DATABASE_NAME = "MONGODB_DATABASE_NAME";
