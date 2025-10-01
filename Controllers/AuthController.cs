@@ -36,7 +36,11 @@ public class AuthController : ControllerBase
         }
 
         if (!request.IsValidRole())
-            return BadRequest(new { Message = "Invalid role. Must be 'officeUser' or 'operator'" });
+            return BadRequest(new { Message = "Invalid role. Must be 'officeUser', 'operator', or 'evOwner'" });
+
+        // Validate NIC requirement for EVOwner
+        if (!request.IsValidNIC())
+            return BadRequest(new { Message = "NIC is required for EVOwner role" });
 
         var response = await _userService.RegisterAsync(request);
         if (response == null)
@@ -46,9 +50,9 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Login user
+    /// Login user using email
     /// </summary>
-    /// <param name="request">Login request</param>
+    /// <param name="request">Login request with email and password</param>
     /// <returns>Authentication response with JWT token</returns>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
@@ -65,7 +69,32 @@ public class AuthController : ControllerBase
 
         var response = await _userService.LoginAsync(request);
         if (response == null)
-            return Unauthorized(new { Message = "Invalid username or password" });
+            return Unauthorized(new { Message = "Invalid email or password" });
+
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Login EVOwner using NIC
+    /// </summary>
+    /// <param name="request">NIC login request</param>
+    /// <returns>Authentication response with JWT token</returns>
+    [HttpPost("nic-login")]
+    public async Task<IActionResult> NICLogin([FromBody] NICLoginRequest request)
+    {
+        // Validate request
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(request);
+
+        if (!Validator.TryValidateObject(request, validationContext, validationResults, true))
+        {
+            var errors = validationResults.Select(vr => vr.ErrorMessage);
+            return BadRequest(new { Errors = errors });
+        }
+
+        var response = await _userService.NICLoginAsync(request);
+        if (response == null)
+            return Unauthorized(new { Message = "Invalid NIC or password, or user is not an EVOwner" });
 
         return Ok(response);
     }

@@ -3,18 +3,28 @@ using System.ComponentModel.DataAnnotations;
 namespace EadChargingBookingBackend.DTOs;
 
 public record LoginRequest(
-    [Required] string Username,
+    [Required][EmailAddress] string Email,
+    [Required] string Password
+);
+
+public record NICLoginRequest(
+    [Required] string NIC,
     [Required] string Password
 );
 
 public record RegisterRequest(
     [Required] string Username,
-    [Required] [EmailAddress] string Email,
-    [Required] [MinLength(6)] string Password,
-    [Required] string Role // "officeUser" or "operator"
+    [Required][EmailAddress] string Email,
+    [Required][MinLength(6)] string Password,
+    [Required] string Role, // "officeUser", "operator", or "evOwner"
+    string? NIC = null // Required only for EVOwner role
 )
 {
-    public bool IsValidRole() => Role == "officeUser" || Role == "operator";
+    public bool IsValidRole() => Role == "officeUser" || Role == "operator" || Role == "evOwner";
+
+    public bool IsNICRequired() => Role == "evOwner";
+
+    public bool IsValidNIC() => !IsNICRequired() || !string.IsNullOrWhiteSpace(NIC);
 }
 
 public record AuthResponse(
@@ -30,6 +40,7 @@ public record UserResponse(
     string Username,
     string Email,
     string Role,
+    string? NIC,
     bool IsActive,
     DateTime CreatedAt,
     DateTime UpdatedAt

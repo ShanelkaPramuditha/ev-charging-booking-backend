@@ -16,9 +16,23 @@ public class UserService : IUserService
 
     public async Task<AuthResponse?> LoginAsync(LoginRequest request)
     {
-        var user = await _userRepository.GetByUsernameAsync(request.Username);
+        var user = await _userRepository.GetByEmailAsync(request.Email);
 
         if (user == null || !user.IsActive)
+            return null;
+
+        if (!_jwtService.VerifyPassword(request.Password, user.PasswordHash))
+            return null;
+
+        var token = _jwtService.GenerateToken(user);
+        return _jwtService.CreateAuthResponse(user, token);
+    }
+
+    public async Task<AuthResponse?> NICLoginAsync(NICLoginRequest request)
+    {
+        var user = await _userRepository.GetByNICAsync(request.NIC);
+
+        if (user == null || !user.IsActive || user.Role != "evOwner")
             return null;
 
         if (!_jwtService.VerifyPassword(request.Password, user.PasswordHash))
@@ -34,12 +48,20 @@ public class UserService : IUserService
         if (!request.IsValidRole())
             return null;
 
+        // Validate NIC requirement for EVOwner
+        if (!request.IsValidNIC())
+            return null;
+
         // Check if username already exists
         if (await _userRepository.UsernameExistsAsync(request.Username))
             return null;
 
         // Check if email already exists
         if (await _userRepository.EmailExistsAsync(request.Email))
+            return null;
+
+        // Check if NIC already exists (for EVOwner)
+        if (request.IsNICRequired() && !string.IsNullOrWhiteSpace(request.NIC) && await _userRepository.NICExistsAsync(request.NIC))
             return null;
 
         // Hash password
@@ -50,7 +72,8 @@ public class UserService : IUserService
             request.Username,
             request.Email,
             passwordHash,
-            request.Role
+            request.Role,
+            request.NIC
         );
 
         // Generate token and return response
@@ -66,6 +89,7 @@ public class UserService : IUserService
             u.Username,
             u.Email,
             u.Role,
+            string.IsNullOrEmpty(u.NIC) ? null : u.NIC,
             u.IsActive,
             u.CreatedAt,
             u.UpdatedAt
@@ -80,6 +104,7 @@ public class UserService : IUserService
             user.Username,
             user.Email,
             user.Role,
+            string.IsNullOrEmpty(user.NIC) ? null : user.NIC,
             user.IsActive,
             user.CreatedAt,
             user.UpdatedAt

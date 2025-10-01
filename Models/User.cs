@@ -16,26 +16,31 @@ public record User : BaseEntity
     [BsonElement("role")]
     public string Role { get; init; } = string.Empty;
 
+    [BsonElement("nic")]
+    public string NIC { get; init; } = string.Empty; // Use empty string instead of null to avoid index issues
+
     [BsonElement("isActive")]
     public bool IsActive { get; init; } = true;
 
     // Constructor for creating new users
-    public User(string username, string email, string passwordHash, string role) : base()
+    public User(string username, string email, string passwordHash, string role, string nic = "") : base()
     {
         Username = username;
         Email = email;
         PasswordHash = passwordHash;
         Role = role;
+        NIC = nic;
     }
 
     // Constructor with all properties (for MongoDB deserialization)
-    public User(string? id, string username, string email, string passwordHash, string role, bool isActive, DateTime createdAt, DateTime updatedAt)
+    public User(string? id, string username, string email, string passwordHash, string role, string nic, bool isActive, DateTime createdAt, DateTime updatedAt)
         : base(id, createdAt, updatedAt)
     {
         Username = username;
         Email = email;
         PasswordHash = passwordHash;
         Role = role;
+        NIC = nic;
         IsActive = isActive;
     }
 
