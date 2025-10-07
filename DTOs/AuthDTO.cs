@@ -16,11 +16,11 @@ public record RegisterRequest(
     [Required] string Username,
     [Required][EmailAddress] string Email,
     [Required][MinLength(6)] string Password,
-    [Required] string Role, // "officeUser", "operator", or "evOwner"
+    [Required] string Role, // "backOffice", "operator", or "evOwner"
     string? NIC = null // Required only for EVOwner role
 )
 {
-    public bool IsValidRole() => Role == "officeUser" || Role == "operator" || Role == "evOwner";
+    public bool IsValidRole() => Role == "backOffice" || Role == "operator" || Role == "evOwner";
 
     public bool IsNICRequired() => Role == "evOwner";
 
@@ -32,7 +32,8 @@ public record AuthResponse(
     string Username,
     string Email,
     string Role,
-    DateTime ExpiresAt
+    DateTime ExpiresAt,
+    UserResponse User
 );
 
 public record UserResponse(

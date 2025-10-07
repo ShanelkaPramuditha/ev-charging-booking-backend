@@ -36,7 +36,7 @@ public class AuthController : ControllerBase
         }
 
         if (!request.IsValidRole())
-            return BadRequest(new { Message = "Invalid role. Must be 'officeUser', 'operator', or 'evOwner'" });
+            return BadRequest(new { Message = "Invalid role. Must be 'backOffice', 'operator', or 'evOwner'" });
 
         // Validate NIC requirement for EVOwner
         if (!request.IsValidNIC())

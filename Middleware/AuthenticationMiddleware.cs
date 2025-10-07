@@ -40,14 +40,14 @@ public static class AuthenticationMiddleware
     {
         services.AddAuthorization(options =>
         {
-            options.AddPolicy("OfficeUserOnly", policy =>
-                policy.RequireRole("officeUser"));
+            options.AddPolicy("BackOfficeOnly", policy =>
+                policy.RequireRole("backOffice"));
 
             options.AddPolicy("OperatorOnly", policy =>
                 policy.RequireRole("operator"));
 
             options.AddPolicy("AnyRole", policy =>
-                policy.RequireRole("officeUser", "operator"));
+                policy.RequireRole("backOffice", "operator"));
 
             options.AddPolicy("PublicAccess", policy =>
                 policy.RequireAssertion(_ => true)); // Allow all authenticated users
