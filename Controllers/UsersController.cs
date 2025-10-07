@@ -22,7 +22,7 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <returns>List of all users</returns>
     [HttpGet]
-    [Authorize(Policy = "OfficeUserOnly")]
+    [Authorize(Policy = "BackOfficeOnly")]
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await _userService.GetAllUsersAsync();
@@ -50,7 +50,7 @@ public class UsersController : ControllerBase
     /// <param name="id">User ID</param>
     /// <returns>No content if successful</returns>
     [HttpDelete("{id}")]
-    [Authorize(Policy = "OfficeUserOnly")]
+    [Authorize(Policy = "BackOfficeOnly")]
     public async Task<IActionResult> DeleteUser(string id)
     {
         var success = await _userService.DeleteUserAsync(id);

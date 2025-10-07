@@ -50,12 +50,24 @@ public class JwtService : IJwtService
 
     public AuthResponse CreateAuthResponse(User user, string token)
     {
+        var User = new UserResponse(
+            Id: user.Id!,
+            Username: user.Username,
+            Email: user.Email,
+            Role: user.Role,
+            NIC: user.NIC,
+            IsActive: user.IsActive,
+            CreatedAt: user.CreatedAt,
+            UpdatedAt: user.UpdatedAt
+        );
+
         return new AuthResponse(
             Token: token,
             Username: user.Username,
             Email: user.Email,
             Role: user.Role,
-            ExpiresAt: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes)
+            ExpiresAt: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes),
+            User: User
         );
     }
 
