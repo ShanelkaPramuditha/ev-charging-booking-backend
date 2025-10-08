@@ -99,7 +99,7 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <param name="id">User ID</param>
     /// <returns>Updated user details</returns>
-    [HttpPost("{id}/activate")]
+    [HttpPatch("{id}/activate")]
     [Authorize(Policy = "BackOfficeOnly")]
     public async Task<IActionResult> ActivateUser(string id)
     {
@@ -115,7 +115,7 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <param name="id">User ID</param>
     /// <returns>Updated user details</returns>
-    [HttpPost("{id}/deactivate")]
+    [HttpPatch("{id}/deactivate")]
     [Authorize(Policy = "BackOfficeOnly")]
     public async Task<IActionResult> DeactivateUser(string id)
     {
