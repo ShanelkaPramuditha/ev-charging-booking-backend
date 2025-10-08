@@ -30,6 +30,22 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
+    /// Get users by role (Office User only)
+    /// </summary>
+    /// <param name="role">User role (backOffice, operator, evOwner)</param>
+    /// <returns>List of users with specified role</returns>
+    [HttpGet("by-role/{role}")]
+    [Authorize(Policy = "BackOfficeOnly")]
+    public async Task<IActionResult> GetUsersByRole(string role)
+    {
+        if (role != "backOffice" && role != "operator" && role != "evOwner")
+            return BadRequest(new { Message = "Invalid role. Must be 'backOffice', 'operator', or 'evOwner'" });
+
+        var users = await _userService.GetUsersByRoleAsync(role);
+        return Ok(users);
+    }
+
+    /// <summary>
     /// Get user by ID
     /// </summary>
     /// <param name="id">User ID</param>
@@ -42,6 +58,72 @@ public class UsersController : ControllerBase
             return NotFound(new { Message = "User not found" });
 
         return Ok(user);
+    }
+
+    /// <summary>
+    /// Update user information (Office User only)
+    /// </summary>
+    /// <param name="id">User ID</param>
+    /// <param name="request">Update request</param>
+    /// <returns>Updated user details</returns>
+    [HttpPut("{id}")]
+    [Authorize(Policy = "BackOfficeOnly")]
+    public async Task<IActionResult> UpdateUser(string id, UpdateUserRequest request)
+    {
+        var updatedUser = await _userService.UpdateUserAsync(id, request);
+        if (updatedUser == null)
+            return BadRequest(new { Message = "User update failed. Check if the user exists and provided data is valid." });
+
+        return Ok(updatedUser);
+    }
+
+    /// <summary>
+    /// Update user status (activate/deactivate) (Office User only)
+    /// </summary>
+    /// <param name="id">User ID</param>
+    /// <param name="request">Update status request</param>
+    /// <returns>Updated user details</returns>
+    [HttpPatch("{id}/status")]
+    [Authorize(Policy = "BackOfficeOnly")]
+    public async Task<IActionResult> UpdateUserStatus(string id, UpdateUserStatusRequest request)
+    {
+        var updatedUser = await _userService.UpdateUserStatusAsync(id, request.IsActive);
+        if (updatedUser == null)
+            return NotFound(new { Message = "User not found" });
+
+        return Ok(updatedUser);
+    }
+
+    /// <summary>
+    /// Activate a user account (Office User only)
+    /// </summary>
+    /// <param name="id">User ID</param>
+    /// <returns>Updated user details</returns>
+    [HttpPost("{id}/activate")]
+    [Authorize(Policy = "BackOfficeOnly")]
+    public async Task<IActionResult> ActivateUser(string id)
+    {
+        var updatedUser = await _userService.UpdateUserStatusAsync(id, true);
+        if (updatedUser == null)
+            return NotFound(new { Message = "User not found" });
+
+        return Ok(updatedUser);
+    }
+
+    /// <summary>
+    /// Deactivate a user account (Office User only)
+    /// </summary>
+    /// <param name="id">User ID</param>
+    /// <returns>Updated user details</returns>
+    [HttpPost("{id}/deactivate")]
+    [Authorize(Policy = "BackOfficeOnly")]
+    public async Task<IActionResult> DeactivateUser(string id)
+    {
+        var updatedUser = await _userService.UpdateUserStatusAsync(id, false);
+        if (updatedUser == null)
+            return NotFound(new { Message = "User not found" });
+
+        return Ok(updatedUser);
     }
 
     /// <summary>
