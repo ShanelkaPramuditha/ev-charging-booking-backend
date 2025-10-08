@@ -1,5 +1,5 @@
-using EadChargingBookingBackend.Models;
 using EadChargingBookingBackend.DTOs;
+using EadChargingBookingBackend.Models;
 using EadChargingBookingBackend.Repositories;
 
 namespace EadChargingBookingBackend.Services;
@@ -527,6 +527,6 @@ public class BookingService : IBookingService
     private async Task<bool> IsBackofficeUserAsync(string userId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-        return user?.Role == "backoffice";
+        return user?.Role == "backOffice";
     }
 }
