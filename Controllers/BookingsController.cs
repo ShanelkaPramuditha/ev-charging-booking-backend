@@ -51,7 +51,7 @@ public class BookingsController : ControllerBase
             return NotFound(new { Message = "Booking not found" });
 
         // Check authorization - only allow backoffice, the EV owner, or the station operator
-        if (!HasRole("backoffice") &&
+        if (!HasRole("backOffice") &&
             GetCurrentUserId() != booking.EVOwnerId)
         {
             // Check if user is the operator for this station
