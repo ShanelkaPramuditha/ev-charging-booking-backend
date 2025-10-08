@@ -70,7 +70,7 @@ public class StationsController : ControllerBase
     public async Task<IActionResult> GetStationsByOperator(string operatorId)
     {
         // Only backoffice users or the operator themselves can access this
-        if (!HasRole("backoffice") && GetCurrentUserId() != operatorId)
+        if (!HasRole("backOffice") && GetCurrentUserId() != operatorId)
             return Forbid();
 
         var stations = await _stationService.GetStationsByOperatorIdAsync(operatorId);
