@@ -10,4 +10,9 @@ public interface IUserService
     Task<IEnumerable<UserResponse>> GetAllUsersAsync();
     Task<UserResponse?> GetUserByIdAsync(string id);
     Task<bool> DeleteUserAsync(string id);
+
+    // New methods for backoffice user management
+    Task<UserResponse?> UpdateUserAsync(string id, UpdateUserRequest request);
+    Task<UserResponse?> UpdateUserStatusAsync(string id, bool isActive);
+    Task<IEnumerable<UserResponse>> GetUsersByRoleAsync(string role);
 }

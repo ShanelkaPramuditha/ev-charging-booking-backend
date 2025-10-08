@@ -13,10 +13,15 @@ public static class ServiceCollectionExtensions
 
         // Register repositories
         services.AddScoped<IUserRepository, MongoUserRepository>();
+        services.AddScoped<IChargingStationRepository, MongoChargingStationRepository>();
+        services.AddScoped<IBookingRepository, MongoBookingRepository>();
 
         // Register services
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IChargingStationService, ChargingStationService>();
+        services.AddScoped<IBookingService, BookingService>();
+        services.AddScoped<IQRCodeService, QRCodeService>();
 
         return services;
     }

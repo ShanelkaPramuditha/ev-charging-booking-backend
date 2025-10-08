@@ -45,9 +45,15 @@ public static class AuthenticationMiddleware
 
             options.AddPolicy("OperatorOnly", policy =>
                 policy.RequireRole("operator"));
+                
+            options.AddPolicy("EVOwnerOnly", policy =>
+                policy.RequireRole("evOwner"));
+
+            options.AddPolicy("BackOfficeOrOperator", policy =>
+                policy.RequireRole("backOffice", "operator"));
 
             options.AddPolicy("AnyRole", policy =>
-                policy.RequireRole("backOffice", "operator"));
+                policy.RequireRole("backOffice", "operator", "evOwner"));
 
             options.AddPolicy("PublicAccess", policy =>
                 policy.RequireAssertion(_ => true)); // Allow all authenticated users
