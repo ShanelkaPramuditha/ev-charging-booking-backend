@@ -225,4 +225,91 @@ public class UserService : IUserService
                 u.UpdatedAt
             ));
     }
+
+    public async Task<IEnumerable<UserResponse>> GetFilteredUsersAsync(string? role = null, string? search = null, bool? isActive = null)
+    {
+        var users = await _userRepository.GetAllAsync();
+        var filteredUsers = users.AsEnumerable();
+
+        // Filter by role if provided
+        if (!string.IsNullOrEmpty(role))
+        {
+            filteredUsers = filteredUsers.Where(u => u.Role.Equals(role, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Filter by active status if provided
+        if (isActive.HasValue)
+        {
+            filteredUsers = filteredUsers.Where(u => u.IsActive == isActive.Value);
+        }
+
+        // Filter by search term if provided (searches in username, email, and NIC)
+        if (!string.IsNullOrEmpty(search))
+        {
+            var searchLower = search.ToLower();
+            filteredUsers = filteredUsers.Where(u =>
+                u.Username.ToLower().Contains(searchLower) ||
+                u.Email.ToLower().Contains(searchLower) ||
+                (!string.IsNullOrEmpty(u.NIC) && u.NIC.ToLower().Contains(searchLower))
+            );
+        }
+
+        return filteredUsers.Select(u => new UserResponse(
+            u.Id!,
+            u.Username,
+            u.Email,
+            u.Role,
+            string.IsNullOrEmpty(u.NIC) ? null : u.NIC,
+            u.IsActive,
+            u.CreatedAt,
+            u.UpdatedAt
+        ));
+    }
+
+    public async Task<UserResponse?> CreateUserAsync(CreateUserRequest request)
+    {
+        // Validate role
+        if (!request.IsValidRole())
+            return null;
+
+        // Validate NIC requirement for EVOwner
+        if (!request.IsValidNIC())
+            return null;
+
+        // Check if username already exists
+        if (await _userRepository.UsernameExistsAsync(request.Username))
+            return null;
+
+        // Check if email already exists
+        if (await _userRepository.EmailExistsAsync(request.Email))
+            return null;
+
+        // Check if NIC already exists (for EVOwner)
+        if (request.IsNICRequired() && !string.IsNullOrWhiteSpace(request.NIC) && await _userRepository.NICExistsAsync(request.NIC))
+            return null;
+
+        // Hash password
+        var passwordHash = _jwtService.HashPassword(request.Password);
+
+        // Create user (users created by backoffice are active by default)
+        var user = await _userRepository.CreateAsync(
+            request.Username,
+            request.Email,
+            passwordHash,
+            request.Role,
+            request.NIC
+        );
+
+        // Return user response (without token)
+        return new UserResponse(
+            user.Id!,
+            user.Username,
+            user.Email,
+            user.Role,
+            string.IsNullOrEmpty(user.NIC) ? null : user.NIC,
+            user.IsActive,
+            user.CreatedAt,
+            user.UpdatedAt
+        );
+    }
 }

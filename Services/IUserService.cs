@@ -15,4 +15,6 @@ public interface IUserService
     Task<UserResponse?> UpdateUserAsync(string id, UpdateUserRequest request);
     Task<UserResponse?> UpdateUserStatusAsync(string id, bool isActive);
     Task<IEnumerable<UserResponse>> GetUsersByRoleAsync(string role);
+    Task<IEnumerable<UserResponse>> GetFilteredUsersAsync(string? role = null, string? search = null, bool? isActive = null);
+    Task<UserResponse?> CreateUserAsync(CreateUserRequest request);
 }
