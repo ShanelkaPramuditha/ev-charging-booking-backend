@@ -171,18 +171,18 @@ public class MongoChargingStationRepository : IChargingStationRepository
     {
         var now = DateTime.UtcNow;
 
-        // Check for any active bookings (Approved status and not yet completed)
+        // Get all approved bookings for this station
+        // We filter by date first to reduce the data set
         var filter = Builders<Booking>.Filter.And(
             Builders<Booking>.Filter.Eq(b => b.StationId, stationId),
             Builders<Booking>.Filter.Eq(b => b.Status, BookingStatus.Approved),
-            Builders<Booking>.Filter.Gt(
-                b => b.BookingDate.Add(b.TimeSlot.EndTime),
-                now
-            )
+            Builders<Booking>.Filter.Gte(b => b.BookingDate, now.Date.AddDays(-1)) // Get bookings from yesterday onwards
         );
 
-        var count = await _bookings.CountDocumentsAsync(filter);
-        return count > 0;
+        var bookings = await _bookings.Find(filter).ToListAsync();
+
+        // Check in memory if any booking end time is in the future
+        return bookings.Any(b => b.BookingDate.Add(b.TimeSlot.EndTime) > now);
     }
 
     public async Task<bool> ExistsByNameAsync(string name)
