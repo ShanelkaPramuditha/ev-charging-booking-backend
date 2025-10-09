@@ -18,31 +18,68 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
-    /// Get all users (Office User only)
+    /// Get all users with optional filters (Office User only)
     /// </summary>
-    /// <returns>List of all users</returns>
+    /// <param name="role">Optional: User role filter (backOffice, operator, evOwner)</param>
+    /// <param name="search">Optional: Search term to filter by username, email, or NIC</param>
+    /// <param name="status">Optional: User status filter (active, inactive)</param>
+    /// <returns>List of users matching the filters</returns>
     [HttpGet]
     [Authorize(Policy = "BackOfficeOnly")]
-    public async Task<IActionResult> GetAllUsers()
+    public async Task<IActionResult> GetUsers(
+        [FromQuery] string? role = null,
+        [FromQuery] string? search = null,
+        [FromQuery] string? status = null)
     {
-        var users = await _userService.GetAllUsersAsync();
+        // Validate role if provided
+        if (!string.IsNullOrEmpty(role))
+        {
+            if (role != "backOffice" && role != "operator" && role != "evOwner")
+                return BadRequest(new { Message = "Invalid role. Must be 'backOffice', 'operator', or 'evOwner'" });
+        }
+
+        // Parse status parameter
+        bool? isActive = null;
+        if (!string.IsNullOrEmpty(status))
+        {
+            if (status.Equals("active", StringComparison.OrdinalIgnoreCase))
+                isActive = true;
+            else if (status.Equals("inactive", StringComparison.OrdinalIgnoreCase))
+                isActive = false;
+            else
+                return BadRequest(new { Message = "Invalid status. Must be 'active' or 'inactive'" });
+        }
+
+        // Get filtered users
+        var users = await _userService.GetFilteredUsersAsync(role, search, isActive);
         return Ok(users);
     }
 
     /// <summary>
-    /// Get users by role (Office User only)
+    /// Create a new user (Office User only)
     /// </summary>
-    /// <param name="role">User role (backOffice, operator, evOwner)</param>
-    /// <returns>List of users with specified role</returns>
-    [HttpGet("by-role/{role}")]
+    /// <param name="request">Create user request</param>
+    /// <returns>Created user details</returns>
+    [HttpPost]
     [Authorize(Policy = "BackOfficeOnly")]
-    public async Task<IActionResult> GetUsersByRole(string role)
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
     {
-        if (role != "backOffice" && role != "operator" && role != "evOwner")
+        // Validate request
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (!request.IsValidRole())
             return BadRequest(new { Message = "Invalid role. Must be 'backOffice', 'operator', or 'evOwner'" });
 
-        var users = await _userService.GetUsersByRoleAsync(role);
-        return Ok(users);
+        // Validate NIC requirement for EVOwner
+        if (!request.IsValidNIC())
+            return BadRequest(new { Message = "NIC is required for EVOwner role" });
+
+        var user = await _userService.CreateUserAsync(request);
+        if (user == null)
+            return BadRequest(new { Message = "User creation failed. Username, email, or NIC may already exist." });
+
+        return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
     }
 
     /// <summary>

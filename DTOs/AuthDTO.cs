@@ -46,3 +46,18 @@ public record UserResponse(
     DateTime CreatedAt,
     DateTime UpdatedAt
 );
+
+public record CreateUserRequest(
+    [Required] string Username,
+    [Required][EmailAddress] string Email,
+    [Required][MinLength(6)] string Password,
+    [Required] string Role, // "backOffice", "operator", or "evOwner"
+    string? NIC = null // Required only for EVOwner role
+)
+{
+    public bool IsValidRole() => Role == "backOffice" || Role == "operator" || Role == "evOwner";
+
+    public bool IsNICRequired() => Role == "evOwner";
+
+    public bool IsValidNIC() => !IsNICRequired() || !string.IsNullOrWhiteSpace(NIC);
+}
