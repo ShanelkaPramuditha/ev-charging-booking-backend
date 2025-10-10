@@ -1,7 +1,5 @@
 using MongoDB.Driver;
-using Microsoft.Extensions.Options;
 using EadChargingBookingBackend.Models;
-using EadChargingBookingBackend.Configuration;
 
 namespace EadChargingBookingBackend.Repositories;
 
@@ -9,10 +7,8 @@ public class MongoUserRepository : IUserRepository
 {
     private readonly IMongoCollection<User> _users;
 
-    public MongoUserRepository(IOptions<MongoDbSettings> mongoDbSettings)
+    public MongoUserRepository(IMongoDatabase database)
     {
-        var client = new MongoClient(mongoDbSettings.Value.ConnectionString);
-        var database = client.GetDatabase(mongoDbSettings.Value.DatabaseName);
         _users = database.GetCollection<User>("users");
 
         // Create indexes for better performance
