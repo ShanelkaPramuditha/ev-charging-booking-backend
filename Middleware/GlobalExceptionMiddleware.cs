@@ -1,3 +1,8 @@
+/*
+ * File Name: GlobalExceptionMiddleware.cs
+ * Description: Middleware for centralized exception handling.
+ */
+
 using System.Net;
 using System.Text.Json;
 

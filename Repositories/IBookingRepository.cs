@@ -1,3 +1,8 @@
+/*
+ * File Name: IBookingRepository.cs
+ * Description: Interface for booking data repository operations.
+ */
+
 using EadChargingBookingBackend.Models;
 
 namespace EadChargingBookingBackend.Repositories;

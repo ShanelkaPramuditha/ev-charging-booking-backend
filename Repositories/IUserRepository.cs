@@ -1,3 +1,8 @@
+/*
+ * File Name: IUserRepository.cs
+ * Description: Interface for user data repository operations.
+ */
+
 using EadChargingBookingBackend.Models;
 
 namespace EadChargingBookingBackend.Repositories;

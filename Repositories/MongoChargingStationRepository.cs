@@ -1,3 +1,8 @@
+/*
+ * File Name: MongoChargingStationRepository.cs
+ * Description: MongoDB implementation of charging station repository.
+ */
+
 using MongoDB.Driver;
 using MongoDB.Driver.GeoJsonObjectModel;
 using EadChargingBookingBackend.Models;

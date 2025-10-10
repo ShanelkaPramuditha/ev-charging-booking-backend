@@ -1,3 +1,8 @@
+/*
+ * File Name: BaseEntity.cs
+ * Description: Base entity with common properties for domain models.
+ */
+
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 

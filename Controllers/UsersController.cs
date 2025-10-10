@@ -1,3 +1,8 @@
+/*
+ * File Name: UsersController.cs
+ * Description: API controller for user management operations.
+ */
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using EadChargingBookingBackend.Services;

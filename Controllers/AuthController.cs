@@ -1,3 +1,8 @@
+/*
+ * File Name: AuthController.cs
+ * Description: Contains API endpoints related to user authentication.
+ */
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using EadChargingBookingBackend.Services;

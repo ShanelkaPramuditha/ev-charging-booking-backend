@@ -1,3 +1,8 @@
+/*
+ * File Name: BookingsController.cs
+ * Description: API controller for managing booking operations and lifecycle.
+ */
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using EadChargingBookingBackend.Services;

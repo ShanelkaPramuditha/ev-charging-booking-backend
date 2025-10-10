@@ -1,3 +1,8 @@
+/*
+ * File Name: MongoDbSettings.cs
+ * Description: MongoDB connection and database configuration settings.
+ */
+
 namespace EadChargingBookingBackend.Configuration;
 
 public class MongoDbSettings

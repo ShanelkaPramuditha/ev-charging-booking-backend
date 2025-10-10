@@ -1,3 +1,8 @@
+/*
+ * File Name: AuthenticationMiddleware.cs
+ * Description: Middleware for JWT authentication configuration.
+ */
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -45,7 +50,7 @@ public static class AuthenticationMiddleware
 
             options.AddPolicy("OperatorOnly", policy =>
                 policy.RequireRole("operator"));
-                
+
             options.AddPolicy("EVOwnerOnly", policy =>
                 policy.RequireRole("evOwner"));
 

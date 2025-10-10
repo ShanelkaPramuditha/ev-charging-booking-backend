@@ -1,3 +1,8 @@
+/*
+ * File Name: RequestLoggingMiddleware.cs
+ * Description: Middleware for logging HTTP requests.
+ */
+
 using System.Diagnostics;
 
 namespace EadChargingBookingBackend.Middleware;

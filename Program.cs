@@ -1,3 +1,8 @@
+/*
+ * File Name: Program.cs
+ * Description: Application entry point and configuration.
+ */
+
 using System.Text.Json;
 using EadChargingBookingBackend.Extensions;
 using EadChargingBookingBackend.Middleware;

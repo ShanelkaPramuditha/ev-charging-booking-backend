@@ -1,3 +1,8 @@
+/*
+ * File Name: ConfigurationManager.cs
+ * Description: Centralized configuration manager for environment variables and settings.
+ */
+
 using DotNetEnv;
 
 namespace EadChargingBookingBackend.Configuration;
