@@ -1,7 +1,5 @@
 using MongoDB.Driver;
-using Microsoft.Extensions.Options;
 using EadChargingBookingBackend.Models;
-using EadChargingBookingBackend.Configuration;
 
 namespace EadChargingBookingBackend.Repositories;
 
@@ -9,10 +7,8 @@ public class MongoBookingRepository : IBookingRepository
 {
     private readonly IMongoCollection<Booking> _bookings;
 
-    public MongoBookingRepository(IOptions<MongoDbSettings> mongoDbSettings)
+    public MongoBookingRepository(IMongoDatabase database)
     {
-        var client = new MongoClient(mongoDbSettings.Value.ConnectionString);
-        var database = client.GetDatabase(mongoDbSettings.Value.DatabaseName);
         _bookings = database.GetCollection<Booking>("bookings");
 
         // Create indexes for better performance
@@ -228,7 +224,7 @@ public class MongoBookingRepository : IBookingRepository
             // Create unique index for QRCode (sparse to allow nulls/empty)
             var qrIndexKeys = Builders<Booking>.IndexKeys
                 .Ascending(b => b.QRCode);
-            var qrIndexOptions = new CreateIndexOptions { Unique = false, Sparse = true };
+            var qrIndexOptions = new CreateIndexOptions { Sparse = true };
             var qrIndexModel = new CreateIndexModel<Booking>(qrIndexKeys, qrIndexOptions);
 
             // Create compound index for station+date+status (for overlapping checks)
