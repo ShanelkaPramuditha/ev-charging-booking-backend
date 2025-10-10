@@ -1,3 +1,8 @@
+/*
+ * File Name: ChargingStation.cs
+ * Description: Domain model for charging stations and related types.
+ */
+
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace EadChargingBookingBackend.Models;

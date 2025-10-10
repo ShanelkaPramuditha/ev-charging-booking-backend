@@ -1,3 +1,8 @@
+/*
+ * File Name: ServiceCollectionExtensions.cs
+ * Description: Extension methods for service registration and Swagger configuration.
+ */
+
 using EadChargingBookingBackend.Services;
 using EadChargingBookingBackend.Repositories;
 using MongoDB.Driver;

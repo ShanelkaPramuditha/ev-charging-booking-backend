@@ -1,3 +1,8 @@
+/*
+ * File Name: IJwtService.cs
+ * Description: Interface for JWT token generation and password hashing.
+ */
+
 using EadChargingBookingBackend.Models;
 using EadChargingBookingBackend.DTOs;
 

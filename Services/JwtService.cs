@@ -1,3 +1,8 @@
+/*
+ * File Name: JwtService.cs
+ * Description: JWT token generation and password hashing implementation.
+ */
+
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;

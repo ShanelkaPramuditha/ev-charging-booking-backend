@@ -1,3 +1,8 @@
+/*
+ * File Name: User.cs
+ * Description: Domain model for application users.
+ */
+
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace EadChargingBookingBackend.Models;

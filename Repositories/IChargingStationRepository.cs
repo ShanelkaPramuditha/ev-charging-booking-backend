@@ -1,3 +1,8 @@
+/*
+ * File Name: IChargingStationRepository.cs
+ * Description: Interface for charging station data repository operations.
+ */
+
 using EadChargingBookingBackend.Models;
 
 namespace EadChargingBookingBackend.Repositories;

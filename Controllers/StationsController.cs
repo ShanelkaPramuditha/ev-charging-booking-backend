@@ -1,3 +1,8 @@
+/*
+ * File Name: StationsController.cs
+ * Description: API controller for charging station management endpoints.
+ */
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using EadChargingBookingBackend.Services;

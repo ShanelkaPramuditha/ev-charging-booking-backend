@@ -1,3 +1,8 @@
+/*
+ * File Name: BookingService.cs
+ * Description: Business logic for booking operations and lifecycle management.
+ */
+
 using EadChargingBookingBackend.DTOs;
 using EadChargingBookingBackend.Models;
 using EadChargingBookingBackend.Repositories;

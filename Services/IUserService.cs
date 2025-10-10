@@ -1,3 +1,8 @@
+/*
+ * File Name: IUserService.cs
+ * Description: Interface for user service operations.
+ */
+
 using EadChargingBookingBackend.DTOs;
 
 namespace EadChargingBookingBackend.Services;

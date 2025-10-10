@@ -1,3 +1,8 @@
+/*
+ * File Name: UserService.cs
+ * Description: Business logic for user management and authentication.
+ */
+
 using EadChargingBookingBackend.DTOs;
 using EadChargingBookingBackend.Repositories;
 

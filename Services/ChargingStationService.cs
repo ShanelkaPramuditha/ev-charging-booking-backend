@@ -1,3 +1,8 @@
+/*
+ * File Name: ChargingStationService.cs
+ * Description: Business logic for charging station operations.
+ */
+
 using EadChargingBookingBackend.Models;
 using EadChargingBookingBackend.DTOs;
 using EadChargingBookingBackend.Repositories;

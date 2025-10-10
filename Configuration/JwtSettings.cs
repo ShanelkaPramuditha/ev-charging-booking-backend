@@ -1,3 +1,8 @@
+/*
+ * File Name: JwtSettings.cs
+ * Description: JWT authentication configuration settings.
+ */
+
 namespace EadChargingBookingBackend.Configuration;
 
 public class JwtSettings

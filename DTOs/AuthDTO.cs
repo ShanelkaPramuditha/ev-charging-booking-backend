@@ -1,3 +1,8 @@
+/*
+ * File Name: AuthDTO.cs
+ * Description: Data transfer objects for authentication requests and responses.
+ */
+
 using System.ComponentModel.DataAnnotations;
 
 namespace EadChargingBookingBackend.DTOs;

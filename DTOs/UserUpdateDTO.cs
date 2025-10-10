@@ -1,3 +1,8 @@
+/*
+ * File Name: UserUpdateDTO.cs
+ * Description: Data transfer objects for user update operations.
+ */
+
 using System.ComponentModel.DataAnnotations;
 
 namespace EadChargingBookingBackend.DTOs;

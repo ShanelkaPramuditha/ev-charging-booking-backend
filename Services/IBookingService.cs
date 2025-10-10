@@ -1,3 +1,8 @@
+/*
+ * File Name: IBookingService.cs
+ * Description: Interface for booking service operations.
+ */
+
 using EadChargingBookingBackend.Models;
 using EadChargingBookingBackend.DTOs;
 

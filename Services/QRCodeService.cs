@@ -1,3 +1,8 @@
+/*
+ * File Name: QRCodeService.cs
+ * Description: Service for generating and validating QR codes for bookings.
+ */
+
 using System.Security.Cryptography;
 using System.Text;
 

@@ -1,3 +1,8 @@
+/*
+ * File Name: MongoUserRepository.cs
+ * Description: MongoDB implementation of user repository.
+ */
+
 using MongoDB.Driver;
 using EadChargingBookingBackend.Models;
 

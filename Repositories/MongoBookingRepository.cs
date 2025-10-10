@@ -1,3 +1,8 @@
+/*
+ * File Name: MongoBookingRepository.cs
+ * Description: MongoDB implementation of booking repository.
+ */
+
 using MongoDB.Driver;
 using EadChargingBookingBackend.Models;
 

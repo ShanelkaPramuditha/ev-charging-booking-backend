@@ -1,3 +1,8 @@
+/*
+ * File Name: BookingDTO.cs
+ * Description: Data transfer objects for booking operations.
+ */
+
 using System.ComponentModel.DataAnnotations;
 using EadChargingBookingBackend.Models;
 

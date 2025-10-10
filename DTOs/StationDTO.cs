@@ -1,3 +1,8 @@
+/*
+ * File Name: StationDTO.cs
+ * Description: Data transfer objects for charging station operations.
+ */
+
 using System.ComponentModel.DataAnnotations;
 using EadChargingBookingBackend.Models;
 

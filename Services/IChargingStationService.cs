@@ -1,3 +1,8 @@
+/*
+ * File Name: IChargingStationService.cs
+ * Description: Interface for charging station service operations.
+ */
+
 using EadChargingBookingBackend.Models;
 using EadChargingBookingBackend.DTOs;
 

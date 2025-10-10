@@ -1,3 +1,8 @@
+/*
+ * File Name: HealthController.cs
+ * Description: Simple health check endpoints for service monitoring.
+ */
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace EadChargingBookingBackend.Controllers;

@@ -1,3 +1,8 @@
+/*
+ * File Name: Booking.cs
+ * Description: Domain model representing a charging station booking.
+ */
+
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace EadChargingBookingBackend.Models;
