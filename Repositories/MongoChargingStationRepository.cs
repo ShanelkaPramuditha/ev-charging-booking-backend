@@ -1,8 +1,6 @@
 using MongoDB.Driver;
 using MongoDB.Driver.GeoJsonObjectModel;
-using Microsoft.Extensions.Options;
 using EadChargingBookingBackend.Models;
-using EadChargingBookingBackend.Configuration;
 
 namespace EadChargingBookingBackend.Repositories;
 
@@ -11,10 +9,8 @@ public class MongoChargingStationRepository : IChargingStationRepository
     private readonly IMongoCollection<ChargingStation> _stations;
     private readonly IMongoCollection<Booking> _bookings;
 
-    public MongoChargingStationRepository(IOptions<MongoDbSettings> mongoDbSettings)
+    public MongoChargingStationRepository(IMongoDatabase database)
     {
-        var client = new MongoClient(mongoDbSettings.Value.ConnectionString);
-        var database = client.GetDatabase(mongoDbSettings.Value.DatabaseName);
         _stations = database.GetCollection<ChargingStation>("chargingStations");
         _bookings = database.GetCollection<Booking>("bookings");
 
