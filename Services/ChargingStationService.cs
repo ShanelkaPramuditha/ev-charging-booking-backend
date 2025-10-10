@@ -231,11 +231,19 @@ public class ChargingStationService : IChargingStationService
     // Helper methods to map ChargingStation model to DTOs
     private async Task<StationResponse> MapToResponseAsync(ChargingStation station)
     {
-        string? operatorName = null;
+        OperatorDetailsDto? operatorDetails = null;
         if (!string.IsNullOrEmpty(station.OperatorId))
         {
             var operator_ = await _userRepository.GetByIdAsync(station.OperatorId);
-            operatorName = operator_?.Username;
+            if (operator_ != null)
+            {
+                operatorDetails = new OperatorDetailsDto(
+                    operator_.Id!,
+                    operator_.Username,
+                    operator_.Email,
+                    operator_.IsActive
+                );
+            }
         }
 
         return new StationResponse(
@@ -246,7 +254,7 @@ public class ChargingStationService : IChargingStationService
             station.TotalSlots,
             station.AvailableSlots,
             station.OperatorId,
-            operatorName,
+            operatorDetails,
             station.Schedule.Select(s => ScheduleItemDto.FromModel(s)).ToList(),
             station.IsActive,
             station.Address,

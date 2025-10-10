@@ -49,13 +49,20 @@ public record StationResponse(
     int TotalSlots,
     int AvailableSlots,
     string? OperatorId,
-    string? OperatorName,
+    OperatorDetailsDto? Operator,
     List<ScheduleItemDto> Schedule,
     bool IsActive,
     string Address,
     string ContactPhone,
     DateTime CreatedAt,
     DateTime UpdatedAt
+);
+
+public record OperatorDetailsDto(
+    string Id,
+    string Username,
+    string Email,
+    bool IsActive
 );
 
 public record StationSummaryResponse(
