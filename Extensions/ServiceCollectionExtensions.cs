@@ -1,5 +1,6 @@
 using EadChargingBookingBackend.Services;
 using EadChargingBookingBackend.Repositories;
+using MongoDB.Driver;
 using AppConfig = EadChargingBookingBackend.Configuration;
 
 namespace EadChargingBookingBackend.Extensions;
@@ -10,6 +11,20 @@ public static class ServiceCollectionExtensions
     {
         // Configure all settings using centralized configuration manager
         AppConfig.ConfigurationManager.ConfigureAllSettings(services, configuration);
+
+        // Register MongoDB as singleton (best practice)
+        services.AddSingleton<IMongoClient>(sp =>
+        {
+            var settings = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<AppConfig.MongoDbSettings>>().Value;
+            return new MongoClient(settings.ConnectionString);
+        });
+
+        services.AddScoped<IMongoDatabase>(sp =>
+        {
+            var client = sp.GetRequiredService<IMongoClient>();
+            var settings = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<AppConfig.MongoDbSettings>>().Value;
+            return client.GetDatabase(settings.DatabaseName);
+        });
 
         // Register repositories
         services.AddScoped<IUserRepository, MongoUserRepository>();
