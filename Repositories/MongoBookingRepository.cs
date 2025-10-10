@@ -228,7 +228,7 @@ public class MongoBookingRepository : IBookingRepository
             // Create unique index for QRCode (sparse to allow nulls/empty)
             var qrIndexKeys = Builders<Booking>.IndexKeys
                 .Ascending(b => b.QRCode);
-            var qrIndexOptions = new CreateIndexOptions { Unique = true, Sparse = true };
+            var qrIndexOptions = new CreateIndexOptions { Unique = false, Sparse = true };
             var qrIndexModel = new CreateIndexModel<Booking>(qrIndexKeys, qrIndexOptions);
 
             // Create compound index for station+date+status (for overlapping checks)

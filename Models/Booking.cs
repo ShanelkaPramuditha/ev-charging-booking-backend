@@ -118,12 +118,23 @@ public record Booking : BaseEntity
     // Check if booking can be cancelled
     public bool CanBeCancelled()
     {
-        // Can only cancel pending or approved bookings
-        if (Status != BookingStatus.Pending && Status != BookingStatus.Approved)
+        // Don't allow cancellation for completed, cancelled, or no-show bookings
+        if (Status == BookingStatus.Cancelled || Status == BookingStatus.Completed || Status == BookingStatus.NoShow)
             return false;
 
-        // Must be at least 12 hours before the booking
-        return (BookingDate.Date + TimeSlot.StartTime) > DateTime.UtcNow.AddHours(12);
+        // ALWAYS allow cancellation for pending bookings (no time restriction)
+        if (Status == BookingStatus.Pending)
+            return true;
+
+        // For approved bookings, apply the 12-hour rule
+        if (Status == BookingStatus.Approved)
+        {
+            // TimeSlot.StartTime is already a TimeSpan, no parsing needed!
+            var bookingDateTime = BookingDate.Date + TimeSlot.StartTime;
+            return bookingDateTime > DateTime.UtcNow.AddHours(12);
+        }
+
+        return false;
     }
 }
 
