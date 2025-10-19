@@ -176,7 +176,7 @@ public class BookingsController : ControllerBase
     }
 
     /// <summary>
-    /// Update a booking (EVOwner only, at least 12h before booking time)
+    /// Update a booking (EVOwner only, within 12h of creation)
     /// </summary>
     /// <param name="id">Booking ID</param>
     /// <param name="request">Booking update request</param>
@@ -188,7 +188,7 @@ public class BookingsController : ControllerBase
         // Check if booking can be modified
         var canModify = await _bookingService.CanModifyBookingAsync(id);
         if (!canModify)
-            return BadRequest(new { Message = "Booking cannot be modified. It must be at least 12 hours before the booking time." });
+            return BadRequest(new { Message = "Booking cannot be modified. Updates are only allowed within 12 hours of booking creation." });
 
         var booking = await _bookingService.UpdateBookingAsync(id, GetCurrentUserId(), request);
         if (booking == null)
