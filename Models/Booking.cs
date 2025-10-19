@@ -109,25 +109,25 @@ public record Booking : BaseEntity
         };
     }
 
-    // Check if booking can be modified
+    // Check if booking can be modified (update booking details)
     public bool CanBeModified()
     {
-        // Can only modify pending bookings
+        // Can only modify pending or approved bookings
         if (Status != BookingStatus.Pending && Status != BookingStatus.Approved)
             return false;
 
-        // Must be at least 12 hours before the booking
-        return (BookingDate.Date + TimeSlot.StartTime) > DateTime.UtcNow.AddHours(12);
+        // Can only modify within 12 hours of creation
+        return DateTime.UtcNow <= CreatedAt.AddHours(12);
     }
 
-    // Check if booking can be cancelled
+    // Check if booking can be cancelled (by EV owner)
     public bool CanBeCancelled()
     {
         // Can only cancel pending or approved bookings
         if (Status != BookingStatus.Pending && Status != BookingStatus.Approved)
             return false;
 
-        // Must be at least 12 hours before the booking
+        // Must be at least 12 hours before the booking appointment
         return (BookingDate.Date + TimeSlot.StartTime) > DateTime.UtcNow.AddHours(12);
     }
 }
